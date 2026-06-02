@@ -344,3 +344,48 @@
   background: #e5e7eb;
   color: #1f2937;
 }
+/* ==========================================================================
+   6. RESPONSIVE DESIGN (DESKTOP & TABLET APPARATUS)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .workspace-split {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .control-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .sidebar-content-wrapper {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .filter-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .map-area {
+    width: 100%;
+    height: 500px;
+    flex: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .filter-controls {
+    grid-template-columns: 1fr;
+  }
+  
+  .app-header {
+    height: auto;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+}
