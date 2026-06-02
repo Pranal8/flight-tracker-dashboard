@@ -1,0 +1,89 @@
+<div class="dashboard-shell">
+  
+  <header class="app-header">
+  <div class="brand-group">
+    <span class="pulse-indicator"></span>
+    <h2 class="brand-title">AeroOps <span class="accent-text">Pro</span> Dashboard</h2>
+  </div>
+  
+  <div *ngIf="flightService.kpiStats$ | async as stats" class="kpi-group">
+    <div class="kpi-badge total">
+      <span class="badge-label">TOTAL FLEET</span>
+      <span class="num">{{stats.total}}</span>
+    </div>
+    <div class="kpi-badge active">
+      <span class="badge-label">IN FLIGHT</span>
+      <span class="num">{{stats.active}}</span>
+    </div>
+    <div class="kpi-badge delayed">
+      <span class="badge-label">DELAYED</span>
+      <span class="num">{{stats.delayed}}</span>
+    </div>
+    <div class="kpi-badge arrived">
+      <span class="badge-label">ARRIVED</span>
+      <span class="num">{{stats.arrived}}</span>
+    </div>
+  </div>
+</header>
+  <div class="workspace-split">
+    
+    <aside class="control-sidebar">
+      <div class="sidebar-content-wrapper">
+        <h3 class="section-title">Filters</h3>
+        
+       <div class="filter-controls" #dropdownContainer>
+  <input class="ui-input" type="text" placeholder="Search Callsign/Flight..." (input)="onSearchChange($event)">
+  
+  <div class="custom-dropdown-container">
+    <button class="dropdown-trigger" (click)="toggleDropdown($event)">
+      <span>{{ selectedStatusLabel }}</span>
+      <span class="chevron-icon" [class.rotated]="isDropdownOpen">▼</span>
+    </button>
+    
+    <ul class="dropdown-menu-list" *ngIf="isDropdownOpen">
+      <li (click)="selectStatus('', 'All Statuses')">All Statuses</li>
+      <li (click)="selectStatus('Active', 'Active Only')">Active Only</li>
+      <li (click)="selectStatus('Delayed', 'Delayed Only')">Delayed Only</li>
+      <li (click)="selectStatus('Arrived', 'Arrived Only')">Arrived Only</li>
+    </ul>
+  </div>
+</div>
+
+        <div *ngIf="flightService.selectedFlight$ | async as selected;" class="telemetry-info-card">
+          <div class="card-accent-strip"></div>
+          
+          <div class="card-header">
+            <h4>{{selected.flightNumber}}</h4>
+            <span class="callsign-sub">{{selected.callsign}}</span>
+          </div>
+          
+          <div class="card-details-grid">
+            <div class="detail-row">
+              <span class="detail-label">Aircraft</span>
+              <span class="detail-value text-bold">{{selected.aircraftType}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Route</span>
+              <span class="detail-value route-text">{{selected.origin}} ➔ {{selected.destination}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Status</span>
+              <span class="status-pill" [attr.data-status]="selected.status">{{selected.status}}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Dep / Arr</span>
+              <span class="detail-value font-mono">{{selected.departureTime}} / {{selected.arrivalTime}}</span>
+            </div>
+          </div>
+          
+          <button class="btn-secondary" (click)="clearSelection()">Close Details</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="map-area">
+      <app-map></app-map>
+    </main>
+
+  </div>
+</div>

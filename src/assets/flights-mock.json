@@ -1,0 +1,28 @@
+[
+  {
+    "flightNumber": "AI-101",
+    "callsign": "AIC101",
+    "aircraftType": "Boeing 777",
+    "origin": "DEL",
+    "destination": "BOM",
+    "currentCoordinates": [28.5562, 77.1000],
+    "originCoordinates": [28.5562, 77.1000],
+    "destinationCoordinates": [19.0896, 72.8656],
+    "status": "Active",
+    "departureTime": "14:30",
+    "arrivalTime": "16:45"
+  },
+  {
+    "flightNumber": "6E-532",
+    "callsign": "IGO532",
+    "aircraftType": "Airbus A320",
+    "origin": "BOM",
+    "destination": "BLR",
+    "currentCoordinates": [15.2000, 75.5000],
+    "originCoordinates": [19.0896, 72.8656],
+    "destinationCoordinates": [13.1986, 77.7066],
+    "status": "Delayed",
+    "departureTime": "15:00",
+    "arrivalTime": "17:15"
+  }
+]
