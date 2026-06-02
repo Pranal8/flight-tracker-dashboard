@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 export class MapComponent implements AfterViewInit, OnDestroy {
   private map!: L.Map;
   private markersLayer = L.layerGroup();
-  private routePolyline: L.Polyline | null = null;
+  private routeLayer = L.layerGroup();
   private sub = new Subscription();
 
   private pulseIconSvg = `
@@ -21,6 +21,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         <animate attributeName="r" values="6;14;6" dur="2s" repeatCount="indefinite"/>
         <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite"/>
       </circle>
+    </svg>
+  `;
+
+  private airportIconSvg = (code: string, color: string) => `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+      <circle cx="20" cy="20" r="4" fill="${color}" />
+      <circle cx="20" cy="20" r="10" fill="none" stroke="${color}" stroke-width="1" stroke-dasharray="2,2" />
+      <text x="20" y="36" fill="${color}" font-size="9" font-family="'Inter', sans-serif" font-weight="bold" text-anchor="middle">${code}</text>
     </svg>
   `;
 
@@ -35,7 +43,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       })
     );
 
-    // Listen to selected flight changes to draw paths and re-center map
     this.sub.add(
       this.flightService.selectedFlight$.subscribe(flight => {
         this.handleFlightSelection(flight);
@@ -46,7 +53,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private initMap() {
     this.map = L.map('map', { zoomControl: false }).setView([20.5937, 78.9629], 5); 
     
-    // Position the zoom controls on the bottom-right out of the sidebar's way
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
     
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -54,6 +60,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }).addTo(this.map);
 
     this.markersLayer.addTo(this.map);
+    this.routeLayer.addTo(this.map); 
   }
 
   private updateMarkers(flights: Flight[]) {
@@ -87,19 +94,38 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   private handleFlightSelection(flight: Flight | null) {
-    if (this.routePolyline) {
-      this.map.removeLayer(this.routePolyline);
-    }
+    this.routeLayer.clearLayers(); 
 
     if (!flight) return;
 
     const pathCoords = [flight.originCoordinates, flight.destinationCoordinates];
-    this.routePolyline = L.polyline(pathCoords, { 
-      color: '#00f2fe', 
-      weight: 3, 
-      dashArray: '6, 10',
-      opacity: 0.9
-    }).addTo(this.map);
+    
+    const routePolyline = L.polyline(pathCoords, { 
+      color: '#38bdf8', 
+      weight: 2.5, 
+      dashArray: '8, 12',
+      opacity: 0.85,
+      className: 'animated-flight-path' 
+    });
+    this.routeLayer.addLayer(routePolyline);
+
+    const originIcon = L.divIcon({
+      html: this.airportIconSvg(flight.origin, '#10b981'), 
+      className: 'airport-marker-node',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
+    });
+    const originMarker = L.marker(flight.originCoordinates, { icon: originIcon });
+    this.routeLayer.addLayer(originMarker);
+
+    const destIcon = L.divIcon({
+      html: this.airportIconSvg(flight.destination, '#38bdf8'), 
+      className: 'airport-marker-node',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
+    });
+    const destMarker = L.marker(flight.destinationCoordinates, { icon: destIcon });
+    this.routeLayer.addLayer(destMarker);
 
     this.map.flyTo(flight.currentCoordinates, 6, {
       animate: true,

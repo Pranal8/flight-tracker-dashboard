@@ -17,3 +17,16 @@
   background: rgba(15, 23, 42, 0.9) !important;
   border: 1px solid rgba(0, 242, 254, 0.3);
 }
+::v-deep .animated-flight-path {
+  stroke-dasharray: 8, 12;
+  animation: flightFlow 25s linear infinite;
+}
+
+@keyframes flightFlow {
+  from {
+    stroke-dashoffset: 500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
